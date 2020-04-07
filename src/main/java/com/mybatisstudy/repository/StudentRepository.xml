@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mybatisstudy.repository.StudentRepository">
+    
+    <resultMap id="studentMap" type="com.mybatisstudy.entity.Student">
+        <!-- 主键使用id标签 -->
+        <id property="id" column="sid"></id>
+        <!-- 除了主键之外的标签都是result -->
+        <result property="name" column="sname"></result>
+        <!-- 映射classes属性 -->
+        <association property="classes" javaType="com.mybatisstudy.entity.Classes">
+            <id property="id" column="cid"></id>
+            <result property="name" column="cname"></result>
+        </association>
+    </resultMap>
+
+    <select id="findStudentById" parameterType="java.lang.Integer" resultMap="studentMap">
+        select
+        s.id sid,
+        s.name sname,
+        c.id cid,
+        c.name cname
+        from t_student s,t_classes c
+        where s.cid = c.id and s.id = #{id}
+    </select>
+
+    <select id="findStudentAll" resultMap="studentMap">
+        select
+        s.id sid,
+        s.name sname,
+        c.id cid,
+        c.name cname
+        from t_student s,t_classes c
+        where s.cid = c.id
+    </select>
+
+    <resultMap id="classesMap" type="com.mybatisstudy.entity.Classes">
+        <id property="id" column="cid"></id>
+        <result property="name" column="cname"></result>
+        <collection property="students" ofType="com.mybatisstudy.entity.Student">
+            <id property="id" column="sid"></id>
+            <result property="name" column="sname"></result>
+        </collection>
+    </resultMap>
+
+    <select id="findClassesStudentsById" parameterType="java.lang.Integer" resultMap="classesMap">
+        select
+        c.id cid,
+        c.name cname,
+        s.id sid,
+        s.name sname
+        from t_classes c,t_student s
+        where c.id = s.cid and c.id = #{id}
+    </select>
+
+    <select id="findClassesStudentsAll" resultMap="classesMap">
+        select
+        c.id cid,
+        c.name cname,
+        s.id sid,
+        s.name sname
+        from t_classes c,t_student s
+        where c.id = s.cid
+    </select>
+
+    <resultMap id="studentCoursesMap" type="com.mybatisstudy.entity.Student">
+        <id property="id" column="sid"></id>
+        <result property="name" column="sname"></result>
+        <collection property="courses" ofType="com.mybatisstudy.entity.Course">
+            <id property="id" column="cid"></id>
+            <result property="name" column="cname"></result>
+        </collection>
+    </resultMap>
+
+    <select id="findStudentCoursesByStudentId" parameterType="java.lang.Integer" resultMap="studentCoursesMap">
+        select
+        s.id sid,
+        s.name sname,
+        c.id cid,
+        c.name cname
+        from t_student s,t_course c,student_course sc
+        where s.id = sc.sid
+        and c.id = sc.cid
+        and s.id = #{id}
+    </select>
+
+    <select id="findStudentCoursesAll" resultMap="studentCoursesMap">
+        select
+        s.id sid,
+        s.name sname,
+        c.id cid,
+        c.name cname
+        from t_student s,t_course c,student_course sc
+        where s.id = sc.sid
+        and c.id = sc.cid
+    </select>
+
+    <resultMap id="courseStudentsMap" type="com.mybatisstudy.entity.Course">
+        <id property="id" column="cid"></id>
+        <result property="name" column="cname"></result>
+        <collection property="students" ofType="com.mybatisstudy.entity.Student">
+            <id property="id" column="sid"></id>
+            <result property="name" column="sname"></result>
+        </collection>
+    </resultMap>
+
+    <select id="findCourseStudentsByCourseId" parameterType="java.lang.Integer" resultMap="courseStudentsMap">
+        select
+        s.id sid,
+        s.name sname,
+        c.id cid,
+        c.name cname
+        from t_student s,t_course c,student_course sc
+        where s.id = sc.sid
+        and c.id = sc.cid
+        and c.id = #{id}
+    </select>
+
+    <select id="findCourseStudentsAll" resultMap="courseStudentsMap">
+        select
+        s.id sid,
+        s.name sname,
+        c.id cid,
+        c.name cname
+        from t_student s,t_course c,student_course sc
+        where s.id = sc.sid
+        and c.id = sc.cid
+    </select>
+        
+</mapper>
